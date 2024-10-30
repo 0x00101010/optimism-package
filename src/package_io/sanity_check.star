@@ -24,6 +24,7 @@ PARTICIPANT_CATEGORIES = {
         "cl_max_cpu",
         "cl_min_mem",
         "cl_max_mem",
+        "service_name_prefix",
         "node_selectors",
         "tolerations",
         "count",

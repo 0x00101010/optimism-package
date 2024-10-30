@@ -142,11 +142,11 @@ def launch(
             index + 1, len(str(len(participants)))
         )
 
-        el_service_name = "op-el-{0}-{1}-{2}-{3}".format(
-            index_str, el_type, cl_type, l2_services_suffix
+        el_service_name = "{0}-el-{1}-{2}-{3}-{4}".format(
+            participant.service_name_prefix, index_str, el_type, cl_type, l2_services_suffix
         )
-        cl_service_name = "op-cl-{0}-{1}-{2}-{3}".format(
-            index_str, cl_type, el_type, l2_services_suffix
+        cl_service_name = "{0}-cl-{1}-{2}-{3}-{4}".format(
+            participant.service_name_prefix, index_str, cl_type, el_type, l2_services_suffix
         )
 
         sequencer_context = all_cl_contexts[0] if len(all_cl_contexts) > 0 else None
