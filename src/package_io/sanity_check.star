@@ -53,6 +53,7 @@ OP_CONTRACT_DEPLOYER_PARAMS = [
 
 ADDITIONAL_SERVICES_PARAMS = [
     "blockscout",
+    "rollup-boost",
 ]
 
 ROOT_PARAMS = [

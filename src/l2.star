@@ -1,5 +1,6 @@
 participant_network = import_module("./participant_network.star")
 blockscout = import_module("./blockscout/blockscout_launcher.star")
+rollup_boost = import_module("./rollup-boost/rollup_boost_launcher.star")
 contract_deployer = import_module("./contracts/contract_deployer.star")
 input_parser = import_module("./package_io/input_parser.star")
 ethereum_package_static_files = import_module(
@@ -62,7 +63,7 @@ def launch_l2(
     )
 
     for additional_service in l2_args.additional_services:
-        if additional_service == "blockscout":
+        if additional_service == "blockscount":
             plan.print("Launching op-blockscout")
             blockscout.launch_blockscout(
                 plan,
@@ -74,6 +75,23 @@ def launch_l2(
                 network_params.network_id,
             )
             plan.print("Successfully launched op-blockscout")
+        elif "rollup-boost":
+            plan.print("Launching rollup-boost")
+
+            sequencer_el_context = all_el_contexts[0] # currently by default first EL is sequencer
+            plan.print(sequencer_el_context)
+            builder_el_context = get_builder_el_context(plan, all_el_contexts)
+            plan.print(builder_el_context)
+
+            rollup_boost.launch(
+                plan,
+                sequencer_el_context,
+                builder_el_context,
+                jwt_file,
+            )
+
+            plan.print("Successfully launched rollup-boost")
+
 
     plan.print(all_l2_participants)
     plan.print(
@@ -81,3 +99,13 @@ def launch_l2(
             l1_bridge_address
         )
     )
+
+def get_builder_el_context(
+    plan,
+    all_el_contexts,
+):
+    for el_context in all_el_contexts:
+        if "builder" in el_context.service_name:
+            return el_context
+
+    fail("No builder EL context found")
