@@ -6,6 +6,10 @@ ethereum_package_input_parser = import_module(
     "github.com/ethpandaops/ethereum-package/src/package_io/input_parser.star"
 )
 
+ethereum_package_el_context = import_module(
+    "github.com/ethpandaops/ethereum-package/src/el/el_context.star"
+)
+
 # EL
 op_geth = import_module("./el/op-geth/op_geth_launcher.star")
 op_reth = import_module("./el/op-reth/op_reth_launcher.star")
@@ -15,6 +19,9 @@ op_besu = import_module("./el/op-besu/op_besu_launcher.star")
 # CL
 op_node = import_module("./cl/op-node/op_node_launcher.star")
 hildr = import_module("./cl/hildr/hildr_launcher.star")
+
+# rollup-boost
+rollup_boost = import_module("./rollup-boost/rollup_boost_launcher.star")
 
 
 def launch(
@@ -163,6 +170,37 @@ def launch(
             sequencer_enabled,
             sequencer_context,
         )
+        all_el_contexts.append(el_context)
+
+        new_el_context = None
+        if "builder-op" in cl_service_name:
+            plan.print("Launching rollup-boost")
+
+            sequencer_el_context = all_el_contexts[0] # currently by default first EL is sequencer
+            plan.print(sequencer_el_context)
+            builder_el_context = get_builder_el_context(plan, all_el_contexts)
+            plan.print(builder_el_context)
+
+            rollup_boost_service = rollup_boost.launch(
+                plan,
+                sequencer_el_context,
+                builder_el_context,
+                jwt_file,
+            )
+            plan.print(rollup_boost_service)
+            new_el_context = ethereum_package_el_context.new_el_context(
+                client_name=el_context.client_name,
+                enode=el_context.enode,
+                ip_addr=rollup_boost_service.ip_address,
+                rpc_port_num=el_context.rpc_port_num,
+                ws_port_num=el_context.ws_port_num,
+                engine_rpc_port_num=8081,
+                rpc_http_url=el_context.rpc_http_url,
+                enr=el_context.enr,
+                service_name=el_context.service_name,
+                el_metrics_info=el_context.el_metrics_info,
+            )
+            plan.print(new_el_context)
 
         cl_context = cl_launch_method(
             plan,
@@ -173,7 +211,7 @@ def launch(
             persistent,
             cl_tolerations,
             node_selectors,
-            el_context,
+            new_el_context if new_el_context else el_context,
             all_cl_contexts,
             l1_config_env_vars,
             sequencer_enabled,
@@ -181,8 +219,18 @@ def launch(
 
         sequencer_enabled = False
 
-        all_el_contexts.append(el_context)
         all_cl_contexts.append(cl_context)
 
     plan.print("Successfully added {0} EL/CL participants".format(num_participants))
     return all_el_contexts, all_cl_contexts
+
+
+def get_builder_el_context(
+    plan,
+    all_el_contexts,
+):
+    for el_context in all_el_contexts:
+        if "builder" in el_context.service_name:
+            return el_context
+
+    fail("No builder EL context found")
