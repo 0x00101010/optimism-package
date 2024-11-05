@@ -6,7 +6,7 @@ ethereum_package_constants = import_module(
     "github.com/ethpandaops/ethereum-package/src/package_io/constants.star"
 )
 
-ENTRYPOINT_ARGS = ["sh", "-c"]
+ENTRYPOINT_ARGS = ["/usr/local/bin/rollup-boost"]
 
 ROLLUP_BOOST_IMAGE_NAME="0x00101010/rollup-boost:latest"
 ROLLUP_BOOST_SERVICE_NAME="op-rollup-boost"
@@ -37,7 +37,6 @@ def get_rollup_boost_config(
     jwt_file,
 ):
     cmd = [
-        "/usr/local/bin/rollup-boost",
         "--l2-url={0}".format(sequencer_el_context.rpc_http_url),
         "--builder-url={0}".format(builder_el_context.rpc_http_url),
         "--jwt-path={0}".format(ethereum_package_constants.JWT_MOUNT_PATH_ON_CONTAINER),
@@ -48,7 +47,7 @@ def get_rollup_boost_config(
     ]
 
     files = {
-        ethereum_package_constants.JWT_MOUNT_PATH_ON_CONTAINER: jwt_file,
+        ethereum_package_constants.JWT_MOUNTPOINT_ON_CLIENTS: jwt_file,
     }
 
     ports = {
