@@ -132,8 +132,6 @@ def launch(
         plan, service_name, RPC_PORT_ID
     )
 
-    plan.print(enode)
-
     metrics_url = "{0}:{1}".format(service.ip_address, METRICS_PORT_NUM)
     geth_metrics_info = ethereum_package_node_metrics.new_node_metrics_info(
         service_name, METRICS_PATH, metrics_url

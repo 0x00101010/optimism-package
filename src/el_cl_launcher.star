@@ -176,10 +176,7 @@ def launch(
             plan.print("Launching rollup-boost")
 
             sequencer_el_context = get_sequencer_el_context(plan, all_el_contexts) # currently by default first EL is sequencer
-            plan.print(sequencer_el_context)
             builder_el_context = get_builder_el_context(plan, all_el_contexts)
-            plan.print(builder_el_context)
-
             rollup_boost_service = rollup_boost.launch(
                 plan,
                 sequencer_el_context,
@@ -199,7 +196,6 @@ def launch(
                 service_name=el_context.service_name,
                 el_metrics_info=el_context.el_metrics_info,
             )
-            plan.print(new_el_context)
 
         cl_context = cl_launch_method(
             plan,
