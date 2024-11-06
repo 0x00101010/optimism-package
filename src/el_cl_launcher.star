@@ -103,7 +103,6 @@ def launch(
 
     all_cl_contexts = []
     all_el_contexts = []
-    sequencer_enabled = True
     for index, participant in enumerate(participants):
         cl_type = participant.cl_type
         el_type = participant.el_type
@@ -167,16 +166,16 @@ def launch(
             el_tolerations,
             node_selectors,
             all_el_contexts,
-            sequencer_enabled,
+            True if "sequencer-op" in cl_service_name else False,
             sequencer_context,
         )
         all_el_contexts.append(el_context)
 
         new_el_context = None
-        if "builder-op" in cl_service_name:
+        if "sequencer-op" in cl_service_name:
             plan.print("Launching rollup-boost")
 
-            sequencer_el_context = all_el_contexts[0] # currently by default first EL is sequencer
+            sequencer_el_context = get_sequencer_el_context(plan, all_el_contexts) # currently by default first EL is sequencer
             plan.print(sequencer_el_context)
             builder_el_context = get_builder_el_context(plan, all_el_contexts)
             plan.print(builder_el_context)
@@ -214,10 +213,8 @@ def launch(
             new_el_context if new_el_context else el_context,
             all_cl_contexts,
             l1_config_env_vars,
-            sequencer_enabled,
+            True if "sequencer-op" in cl_service_name else False,
         )
-
-        sequencer_enabled = False
 
         all_cl_contexts.append(cl_context)
 
@@ -234,3 +231,13 @@ def get_builder_el_context(
             return el_context
 
     fail("No builder EL context found")
+
+def get_sequencer_el_context(
+    plan,
+    all_el_contexts,
+):
+    for el_context in all_el_contexts:
+        if "sequencer" in el_context.service_name:
+            return el_context
+
+    fail("No sequencer EL context found")

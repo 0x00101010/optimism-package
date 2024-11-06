@@ -132,6 +132,8 @@ def launch(
         plan, service_name, RPC_PORT_ID
     )
 
+    plan.print(enode)
+
     metrics_url = "{0}:{1}".format(service.ip_address, METRICS_PORT_NUM)
     geth_metrics_info = ethereum_package_node_metrics.new_node_metrics_info(
         service_name, METRICS_PATH, metrics_url
@@ -173,7 +175,7 @@ def get_config(
         + "/genesis-{0}.json".format(launcher.network_id),
     )
 
-    discovery_port = DISCOVERY_PORT_NUM
+    discovery_port = DISCOVERY_PORT_NUM + len(existing_el_clients) * 10
     used_ports = get_used_ports(discovery_port)
 
     cmd = [
@@ -208,10 +210,10 @@ def get_config(
         "--port={0}".format(discovery_port),
     ]
 
-    if not sequencer_enabled:
-        cmd.append(
-            "--rollup.sequencerhttp={0}".format(sequencer_context.beacon_http_url)
-        )
+    # if not sequencer_enabled:
+    #     cmd.append(
+    #         "--rollup.sequencerhttp={0}".format(sequencer_context.beacon_http_url)
+    #     )
 
     if len(existing_el_clients) > 0:
         cmd.append(
