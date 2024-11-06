@@ -40,8 +40,6 @@ def get_rollup_boost_config(
         "--l2-url={0}".format(sequencer_el_context.rpc_http_url),
         "--builder-url={0}".format(builder_el_context.rpc_http_url),
         "--jwt-path={0}".format(ethereum_package_constants.JWT_MOUNT_PATH_ON_CONTAINER),
-        # "--builder-jwt-path",
-        # ethereum_package_constants.JWT_MOUNT_PATH_ON_CONTAINER,
         "--rpc-port={0}".format(ROLLUP_BOOST_RPC_PORT_NUM),
         "--metrics"
     ]
