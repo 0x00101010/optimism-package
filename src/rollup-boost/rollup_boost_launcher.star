@@ -53,7 +53,8 @@ def get_rollup_boost_config(
         # "--builder-jwt-path",
         # ethereum_package_constants.JWT_MOUNT_PATH_ON_CONTAINER,
         "--rpc-port={0}".format(ROLLUP_BOOST_RPC_PORT_NUM),
-        "--metrics"
+        "--metrics",
+        "--boost-sync"
     ]
 
     files = {

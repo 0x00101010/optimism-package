@@ -175,7 +175,7 @@ def get_config(
         + "/genesis-{0}.json".format(launcher.network_id),
     )
 
-    discovery_port = DISCOVERY_PORT_NUM + len(existing_el_clients) * 10
+    discovery_port = DISCOVERY_PORT_NUM
     used_ports = get_used_ports(discovery_port)
 
     cmd = [
