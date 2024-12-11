@@ -28,6 +28,7 @@ WS_PORT_NUM = 8546
 DISCOVERY_PORT_NUM = 30303
 ENGINE_RPC_PORT_NUM = 8551
 METRICS_PORT_NUM = 9001
+EVENTS_PORT_NUM = 1122
 
 # The min/max CPU/memory that the execution node can use
 EXECUTION_MIN_CPU = 300
@@ -41,6 +42,7 @@ UDP_DISCOVERY_PORT_ID = "udp-discovery"
 ENGINE_RPC_PORT_ID = "engine-rpc"
 ENGINE_WS_PORT_ID = "engineWs"
 METRICS_PORT_ID = "metrics"
+EVENTS_PORT_ID = "events"
 
 # TODO(old) Scale this dynamically based on CPUs available and Geth nodes mining
 NUM_MINING_THREADS = 1
@@ -176,6 +178,11 @@ def get_config(
     discovery_port = DISCOVERY_PORT_NUM
     used_ports = get_used_ports(discovery_port)
 
+    # if "flashblocks" in participant.el_image:
+    used_ports[EVENTS_PORT_ID] = ethereum_package_shared_utils.new_port_spec(
+        EVENTS_PORT_NUM, ethereum_package_shared_utils.TCP_PROTOCOL
+    ) 
+
     cmd = [
         "geth",
         "--networkid={0}".format(launcher.network_id),
@@ -208,10 +215,10 @@ def get_config(
         "--port={0}".format(discovery_port),
     ]
 
-    if not sequencer_enabled:
-        cmd.append(
-            "--rollup.sequencerhttp={0}".format(sequencer_context.beacon_http_url)
-        )
+    # if not sequencer_enabled:
+    #     cmd.append(
+    #         "--rollup.sequencerhttp={0}".format(sequencer_context.beacon_http_url)
+    #     )
 
     if len(existing_el_clients) > 0:
         cmd.append(
