@@ -2,14 +2,14 @@ optimism_package:
   chains:
     - participants:
         - el_type: op-geth
-          el_image: ""
+          el_image: "flashblocks-geth:latest"
           el_log_level: ""
           cl_type: op-node
           cl_image: ""
           cl_log_level: ""
           service_name_prefix: "builder-op"
         - el_type: op-geth
-          el_image: ""
+          el_image: "local-op-geth:latest"
           el_log_level: ""
           cl_type: op-node
           cl_image: ""
